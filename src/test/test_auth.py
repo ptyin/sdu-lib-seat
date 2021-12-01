@@ -11,7 +11,6 @@ class TestAuth(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        os.chdir(os.path.join(os.path.dirname(__file__), "../resrc/"))
         logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s', level=logging.DEBUG)
         with open('../resrc/info.json', 'rt') as file:
             info = json.loads(file.read())

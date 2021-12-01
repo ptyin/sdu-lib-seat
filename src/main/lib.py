@@ -11,7 +11,7 @@ from core.worker import Worker
 def wait_to_tomorrow(delay: str):
     """Wait 'till tomorrow"""
     delay: datetime.datetime = datetime.datetime.strptime(delay, '%H:%M:%S')
-    tomorrow = datetime.datetime.replace(datetime.datetime.today() + datetime.timedelta(days=1),  # 明天
+    tomorrow = datetime.datetime.replace(datetime.datetime.today() + datetime.timedelta(days=0),  # 明天 TODO
                                          hour=delay.hour, minute=delay.minute, second=delay.second)
     delta = tomorrow - datetime.datetime.now()
     time.sleep(delta.seconds)

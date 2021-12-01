@@ -34,7 +34,7 @@ class Auth(Thread):
         self.__logger: Logger = logging.getLogger()
 
     def __gather_trivial(self, text):
-        soup = BeautifulSoup(text, "lxml")
+        soup = BeautifulSoup(text, 'html.parser')
         self.lt = soup.select_one("#lt").get("value")
         self.execution = soup.select_one("[name=execution]").get("value")
         self._eventId = soup.select_one("[name=_eventId]").get("value")
@@ -43,7 +43,7 @@ class Auth(Thread):
             self.__logger.error("Fail to gather sufficient information to login.")
 
     def __get_rsa(self):
-        with open(os.path.join(os.path.dirname(__file__), "../../resrc/des.js"), encoding="utf-8") as f:
+        with open(os.path.join(os.path.dirname(__file__), "../util/des.js"), encoding="utf-8") as f:
             js = f.read()
             f.close()
         self.rsa = execjs.compile(js).call('strEnc', self.userid + self.password + self.lt, "1", "2", "3")

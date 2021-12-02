@@ -61,6 +61,9 @@ class Auth(Thread):
         self.__logger.info('Status code for phase-1-response is {}'.format(res.status_code))
         url = res.headers.get("Location").replace(' ', '')
 
+        if url.startswith("/cas/login?service="):
+            url = url.replace("/cas/login?service=", "")
+
         return url
 
     def __phase2(self, url):

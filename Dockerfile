@@ -32,6 +32,8 @@ RUN   npm install && pip3 install -r requirements.txt
 
 COPY ./src/main                     /sdu
 
+RUN  ln -s /usr/bin/node /usr/local/bin/node
+
 ENV   HOST 0.0.0.0
 
 ENV   PORT 8000

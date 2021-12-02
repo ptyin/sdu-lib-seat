@@ -1,4 +1,6 @@
+*.DS_Store
+
 /venv/
 /.idea/
-/src/resrc/info.json
+/src/resrc/user.json
 /src/resrc/example.json

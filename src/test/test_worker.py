@@ -12,7 +12,7 @@ class TestWorker(TestCase):
     def setUpClass(cls) -> None:
         os.chdir(os.path.join(os.path.dirname(__file__), "../resrc/"))
         logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s', level=logging.DEBUG)
-        with open('../resrc/info.json', 'rt') as file:
+        with open('../resrc/user.json', 'rt') as file:
             info = json.loads(file.read())
         date = datetime.datetime.today() + datetime.timedelta(days=1)
         cls.auth, cls.spider = prepare(info['userid'], info['passwd'], '青岛校区图书馆-七楼-青岛馆七楼北阅览区', date)

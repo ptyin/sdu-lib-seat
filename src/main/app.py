@@ -1,3 +1,4 @@
+import os
 import sys
 from argparse import ArgumentParser
 
@@ -14,7 +15,7 @@ if __name__ == '__main__':
                              '或没提供该参数，则在所有仍没被占用的座位进行占座')
     parser.add_argument('--time', type=str, default='00:01:00',
                         help='发起占座的时间，默认是第二天00:01分开始抢后天的位置')
-    parser.add_argument('--retry', type=int, default=20, help='重试次数')
+    parser.add_argument('--retry', type=int, default=10, help='重试次数')
     paras = parser.parse_args()
 
     # Configure logging settings.

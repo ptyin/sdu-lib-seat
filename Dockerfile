@@ -5,7 +5,7 @@ ENV CRON_PATH=/etc/crontabs
 ENV PYTHONUNBUFFERED=1
 ENV TZ=Asia/Shanghai
 
-RUN   mkdir /crontab-ui; touch $CRON_PATH/root; chmod +x $CRON_PATH/root
+RUN   mkdir -p /crontab-ui/sdu-lib-seat && touch $CRON_PATH/root && chmod +x $CRON_PATH/root
 
 WORKDIR /crontab-ui
 
@@ -27,9 +27,10 @@ RUN   apk --update --no-cache add \
 COPY ./crontab-ui/supervisord.conf  /etc/supervisord.conf
 COPY ./crontab-ui                   /crontab-ui
 COPY ./requirements.txt             /crontab-ui/requirements.txt
-COPY ./src/main                     /crontab-ui
 
 RUN   npm install && pip3 install -r requirements.txt
+
+COPY ./src/main                     /sdu
 
 ENV   HOST 0.0.0.0
 

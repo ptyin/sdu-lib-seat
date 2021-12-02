@@ -6,8 +6,8 @@ from lib import *
 if __name__ == '__main__':
     # Configure parameters
     parser = ArgumentParser()
-    parser.add_argument('--userid', type=str, help='山东大学学号')                #
-    parser.add_argument('--passwd', type=str, help='山东大学统一身份认证密码')      #
+    parser.add_argument('--userid', type=str, help='山东大学学号')
+    parser.add_argument('--passwd', type=str, help='山东大学统一身份认证密码')
     parser.add_argument('--area', type=str, help='图书馆-楼层-楼层内区域')
     parser.add_argument('--seats', type=str, nargs='*',
                         help='想要占的座位，按照倾向程度排序，如果列出的座位均已无法占用，'

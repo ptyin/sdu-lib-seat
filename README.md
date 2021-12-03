@@ -8,8 +8,22 @@
 
 ## 1. 命令行用法
 
+### 下载和安装
+
+```shell
+# 注意带参数--recurse-submodules
+git clone --recurse-submodules https://github.com/PTYin/sdu-lib-seat.git
+# 切换进入项目目录
+cd sdu-lib-seat
+# 安装python依赖
+pip install -r requirements.txt
+```
+
+### 运行
+
 - 在当天运行的脚本会在默认第2天00:00:02抢占第3天的座位
 - 例如今天是12月2日的23:50，我需要抢后天也就是12月4日的座位，则在12月2日运行脚本，脚本会在12月3日凌晨进行抢占
+
 ```shell
 cd ./src/main/
 python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想要占的座位] --time [脚本占座的时间]
@@ -39,9 +53,45 @@ python app.py --userid 201805139999 --passwd abc123 --area 青岛校区图书馆
 
 ## 2. 图形界面管理
 
-[Crontab-UI](crontab-ui/README.md)提供了添加作业、删除作业或暂停作业的图形接口。为了使多人占座，管理占座任务成为可能，在项目中引入Crontab-UI作为管理占座脚本的子模块。
+- [Crontab-UI](https://github.com/alseambusher/crontab-ui)提供了添加任务、删除任务或暂停任务的图形接口。为了使多人占座，管理占座任务成为可能，在项目中引入Crontab-UI作为管理占座脚本的子模块。
+- 具体Crontab-UI的操作见[Crontab-UI](crontab-ui/README.md)
+- [测试环境](http://101.34.91.143:7000/)
+  - 测试用户：test123
+  - 测试密码：test123@sdulib
 
-## 对开发者
+## 安装
+
+- 由于利用crontab-ui执行脚本山东大学统一身份认证密码会暴露出来
+- 推荐自己在服务器上利用docker进行搭建
+
+```shell
+  sudo docker build --tag ptyin/crontab-ui:latest .
+```
+
+## 运行
+```shell
+sudo docker run -e BASIC_AUTH_USER=user -e BASIC_AUTH_PWD=yoursecretpassword -d -p 8000:8000 --name crontab-ui ptyin/crontab-ui
+```
+- 运行之后，会在本地拉起一个端口8000的web服务
+- 登陆用户名和密码为你命令提供的环境变量，例子为user和yoursecretpassword
+
+#### 新建任务
+
+![新建任务](doc/1.png)
+
+#### 编辑任务
+
+![编辑任务](doc/2.png)
+
+#### 邮件提示
+
+![邮件提示](doc/3.png)
+
+#### 保存任务
+
+![保存任务](doc/4.png)
+
+## 3. 对开发者
 
 - 如果需要运行src/test文件夹下单元测试需要src/resrc文件夹下有user.json文件，样例：
 ```json
@@ -50,8 +100,4 @@ python app.py --userid 201805139999 --passwd abc123 --area 青岛校区图书馆
     "userid": "2018XXXXXXXX",
     "passwd": "YourPassword"
 }
-```
-- 如需发送邮件模块则需要在src/resrc文件夹下添加mail.json文件，样例：
-```json
-
 ```

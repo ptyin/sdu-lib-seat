@@ -11,10 +11,10 @@ if __name__ == '__main__':
     parser.add_argument('--passwd', type=str, help='山东大学统一身份认证密码')
     parser.add_argument('--area', type=str, help='图书馆-楼层-楼层内区域')
     parser.add_argument('--seats', type=str, nargs='*',
-                        help='想要占的座位，按照倾向程度排序，如果列出的座位均已无法占用，'
-                             '或没提供该参数，则在所有仍没被占用的座位进行占座')
+                        help='想要约的座位，按照倾向程度排序，如果列出的座位均已无法预约，'
+                             '或没提供该参数，则在所有仍没被约用的座位进行约座')
     parser.add_argument('--time', type=str, default='00:02:00',
-                        help='发起占座的时间，默认是第二天00:02分开始抢后天的位置')
+                        help='发起约座的时间，默认是第二天00:02分开始抢后天的位置')
     parser.add_argument('--retry', type=int, default=10, help='重试次数')
     paras = parser.parse_args()
 

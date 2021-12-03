@@ -12,7 +12,8 @@ WORKDIR /crontab-ui
 LABEL maintainer = "@PTYin"
 LABEL description = "SDU-LIB-SEAT docker"
 
-RUN   apk --update --no-cache add \
+RUN   sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+      && apk --update --no-cache add \
       wget \
       curl \
       nodejs \

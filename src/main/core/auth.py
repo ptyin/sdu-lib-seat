@@ -100,7 +100,7 @@ class Auth(Thread):
         # 如果最终获取到这几个必要cookie则说明登陆成功
         if self.session.cookies['userid'] and self.session.cookies['user_name'] and\
                 self.session.cookies['user_name'] and self.session.cookies['access_token'] is None:
-            self.__logger.error('Failed to login.')
+            raise AuthException("登陆失败")
         else:
             self.__already_login = True
             self.__logger.info('Login successfully!')

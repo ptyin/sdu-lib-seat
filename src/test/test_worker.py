@@ -15,7 +15,7 @@ class TestWorker(TestCase):
         with open('../resrc/user.json', 'rt') as file:
             info = json.loads(file.read())
         date = datetime.datetime.today() + datetime.timedelta(days=1)
-        cls.auth, cls.spider = prepare(info['userid'], info['passwd'], '青岛校区图书馆-七楼-青岛馆七楼北阅览区', date)
+        cls.auth, cls.spider = prepare(info['userid'], info['passwd'], '青岛校区图书馆-七楼-青岛馆七楼北阅览区', date, retry=1)
 
     def setUp(self) -> None:
         self.worker = Worker(self.spider.date, self.auth.session.cookies,

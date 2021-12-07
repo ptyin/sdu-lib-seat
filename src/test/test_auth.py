@@ -15,7 +15,7 @@ class TestAuth(TestCase):
         with open('../resrc/user.json', 'rt') as file:
             info = json.loads(file.read())
             cls.info = info
-        cls.auth = Auth(info['userid'], info['passwd'])
+        cls.auth = Auth(info['userid'], info['passwd'], retry=1)
 
     def test_login(self):
         self.auth.login()
@@ -23,3 +23,8 @@ class TestAuth(TestCase):
                              self.auth.session.cookies['user_name'] and self.auth.session.cookies['access_token'])
         self.assertEqual(self.auth.session.cookies['userid'], self.auth.userid)
         self.assertEqual(urllib.parse.unquote(self.auth.session.cookies['user_name']), self.info["username"])
+
+    def test_run(self):
+        self.auth.start()
+        self.auth.join()
+        self.assertTrue(self.auth.success())

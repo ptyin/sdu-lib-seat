@@ -17,22 +17,29 @@ def wait_to_tomorrow(delay: str):
     time.sleep(delta.seconds)
 
 
-def prepare(userid, passwd, query_area: str, date) -> Tuple[Auth, Spider]:
-    # Get authorized.
-    auth = Auth(userid, passwd)
-    # Spider library, area and seat info.
-    spider = Spider(query_area=query_area.split('-'), date=date)
+def prepare(userid, passwd, query_area: str, date, retry) -> Tuple[Auth, Spider]:
+    auth, spider = None, None
+    try:
+        # Get authorized.
+        auth = Auth(userid, passwd, retry)
+        # Spider library, area and seat info.
+        spider = Spider(query_area.split('-'), date, retry)
+        # Start two threads concurrently.
+        auth.start(), spider.start()
+        auth.join(), spider.join()
+    except RuntimeError as rt:
+        logging.error(rt)
 
-    # Start two threads concurrently.
-    auth.start(), spider.start()
-    auth.join(), spider.join()
     return auth, spider
 
 
 def book(auth: Auth, spider: Spider, preferred_seats) -> bool:
-
-    worker = Worker(spider.date, auth.session.cookies,
-                    preferred_seats,
-                    spider.seats, spider.segment)
-    success, seat = worker.book()
+    try:
+        worker = Worker(spider.date, auth.session.cookies,
+                        preferred_seats,
+                        spider.seats, spider.segment)
+        success, seat = worker.book()
+    except (TypeError, Exception) as e:
+        logging.error(e)
+        success = False
     return success

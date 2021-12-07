@@ -10,7 +10,7 @@ from logging import Logger
 
 # noinspection HttpUrlsUsage
 class Spider(Thread):
-    def __init__(self, query_area: list, date: datetime.date):
+    def __init__(self, query_area: list, date: datetime.date, retry):
         super().__init__()
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -21,6 +21,7 @@ class Spider(Thread):
 
         self.query_area = query_area
         self.date = date.strftime('%Y-%m-%d')
+        self.__retry = retry
 
         self.areas = {}
         self.seats = {}
@@ -46,7 +47,7 @@ class Spider(Thread):
         res = self.session.get("http://seat.lib.sdu.edu.cn/api.php/v3areas/{}/date/{}".format(area, date))
         status = res.json()['status']
         if status != 1:
-            raise RuntimeError('Cannot gather area info.')
+            raise SpiderException('Cannot gather area info.')
 
         data: dict = res.json()['data']['list']
         for child in data['childArea']:
@@ -61,7 +62,7 @@ class Spider(Thread):
         res = self.session.get(url)
         status = res.json()['status']
         if status != 1:
-            raise RuntimeError('Cannot gather seat info.')
+            raise SpiderException('Cannot gather seat info.')
 
         data = res.json()['data']['list']
         for seat in data:
@@ -87,7 +88,7 @@ class Spider(Thread):
                 while len(self.areas) == size:
                     res = self.get_area(self.areas[area], self.date)
             else:
-                raise RuntimeError('无法查找到对应的区域，请检查提供的区域信息')
+                raise SpiderException('无法查找到对应的区域，请检查提供的区域信息')
 
         if self.query_area[-1] in self.areas:
             self.final_area = self.areas[self.query_area[-1]]
@@ -99,7 +100,7 @@ class Spider(Thread):
                         self.segment = area["area_times"]["data"]["list"][0]["bookTimeId"]
                         break
             else:
-                raise RuntimeError('选择的区域状态不正常')
+                raise SpiderException('选择的区域状态不正常')
 
             self.__logger.debug('Final area info {}: {}'.format(self.query_area[-1], self.final_area))
             self.get_seat(self.final_area, self.segment, self.date)
@@ -107,7 +108,7 @@ class Spider(Thread):
             if self.final_area and self.segment is not None and len(self.seats) > 0:
                 self.__gathered_enough = True
         else:
-            raise RuntimeError('无法查找到对应的区域，请检查提供的区域信息')
+            raise SpiderException('无法查找到对应的座位，请检查提供的座位信息')
 
     def success(self) -> bool:
         return self.__gathered_enough
@@ -119,15 +120,17 @@ class Spider(Thread):
         self.__gathered_enough = False
 
     def run(self) -> None:
-        while not self.success():
+        count = 0
+        while count < self.__retry and not self.success():
+            count += 1
             try:
                 self.gather_info()
             except EnvironmentError:
-                self.__logger.warning('系统环境导致爬虫进程出现异常，请检查')
-                time.sleep(10)
-            except RuntimeError as e:
-                self.__logger.warning(e)
-                time.sleep(10)
+                self.__logger.error('系统环境导致爬虫进程出现异常，请检查')
+                time.sleep(30)
+            except SpiderException as e:
+                self.__logger.error(e)
+                time.sleep(30)
 
         if self.final_area and self.segment is not None and len(self.seats) > 0:
             self.__logger.info('Spider process works! Selected area is {final_area}, '
@@ -135,3 +138,6 @@ class Spider(Thread):
         else:
             self.__logger.warning('Spider process cannot find sufficient info')
 
+
+class SpiderException(Exception):
+    pass

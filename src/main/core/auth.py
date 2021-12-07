@@ -12,10 +12,11 @@ from logging import Logger
 
 # noinspection HttpUrlsUsage
 class Auth(Thread):
-    def __init__(self, userid, password):
+    def __init__(self, userid, password, retry):
         super().__init__()
         self.userid = userid
         self.password = password
+        self.__retry = retry
 
         self.lib_url = "http://seat.lib.sdu.edu.cn/home/web/f_second"
         self.auth_url = "http://seat.lib.sdu.edu.cn/cas/index.php"
@@ -34,19 +35,24 @@ class Auth(Thread):
         self.__logger: Logger = logging.getLogger()
 
     def __gather_trivial(self, text):
-        soup = BeautifulSoup(text, 'html.parser')
-        self.lt = soup.select_one("#lt").get("value")
-        self.execution = soup.select_one("[name=execution]").get("value")
-        self._eventId = soup.select_one("[name=_eventId]").get("value")
+        try:
+            soup = BeautifulSoup(text, 'html.parser')
+            self.lt = soup.select_one("#lt").get("value")
+            self.execution = soup.select_one("[name=execution]").get("value")
+            self._eventId = soup.select_one("[name=_eventId]").get("value")
+        except TypeError as e:
+            self.__logger.error(e)
 
         if self.lt and self.execution and self._eventId is None:
-            self.__logger.error("Fail to gather sufficient information to login.")
+            raise AuthException("未获取到用户登陆所需的所有信息")
 
     def __get_rsa(self):
         with open(os.path.join(os.path.dirname(__file__), "../util/des.js"), encoding="utf-8") as f:
             js = f.read()
             f.close()
         self.rsa = execjs.compile(js).call('strEnc', self.userid + self.password + self.lt, "1", "2", "3")
+        if self.rsa is None:
+            raise AuthException("未获取DES加密的用户信息")
 
     def __phase1(self, url):
         data = {
@@ -59,8 +65,9 @@ class Auth(Thread):
         }
         res = self.session.post(url, data=data, allow_redirects=False)
         self.__logger.info('Status code for phase-1-response is {}'.format(res.status_code))
+        if res.status_code != 302:
+            raise AuthException('阶段1：响应状态码为{}, 认证失败'.format(res.status_code))
         url = res.headers.get("Location").replace(' ', '')
-
         if url.startswith("/cas/login?service="):
             url = url.replace("/cas/login?service=", "")
 
@@ -69,6 +76,8 @@ class Auth(Thread):
     def __phase2(self, url):
         res = self.session.get(url, allow_redirects=True)
         self.__logger.info('Status code for phase-2-response is {}'.format(res.status_code))
+        if res.status_code != 200:
+            raise AuthException('阶段2：响应状态码为{}, 认证失败'.format(res.status_code))
         return res.status_code
 
     def login(self):
@@ -108,15 +117,19 @@ class Auth(Thread):
 
     def run(self) -> None:
         # Retry until login successfully.
-        while not self.success():
+        count = 0
+        while count < self.__retry and not self.success():
+            count += 1
             try:
                 self.login()
-                time.sleep(1)
             except EnvironmentError as env:
                 logging.error('系统环境导致认证进程出现异常{}，请检查'.format(env))
-                time.sleep(10)
-            except RuntimeError as rt:
-                logging.error('登陆出现运行时异常{}，请检查'.format(rt))
-                time.sleep(10)
+                time.sleep(30)
+            except AuthException as e:
+                logging.error(e)
+                time.sleep(30)
         return
 
+
+class AuthException(Exception):
+    pass

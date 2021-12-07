@@ -8,7 +8,8 @@ class TestSpider(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.spider = Spider(['青岛校区图书馆', '七楼', '青岛馆七楼北阅览区'], date=datetime.datetime.today())
+        date = datetime.datetime.today()+datetime.timedelta(0)
+        cls.spider = Spider("蒋震图书馆-蒋震6楼-D603室".split('-'), date=date, retry=1)
         logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s', level=logging.DEBUG)
 
     def test_get_lib(self):
@@ -19,7 +20,7 @@ class TestSpider(TestCase):
         self.assertIn('青岛校区图书馆', self.spider.areas)
 
     def test_get_area(self):
-        date = datetime.datetime.today().strftime('%Y-%m-%d')
+        date = (datetime.datetime.today()).strftime('%Y-%m-%d')
         self.spider.get_area(1, date)  # 蒋震
         self.assertIn('蒋震6楼', self.spider.areas)
 
@@ -27,3 +28,8 @@ class TestSpider(TestCase):
         self.spider.gather_info()
         self.assertIsNotNone(self.spider.final_area)
         self.assertIsNotNone(self.spider.segment)
+
+    def test_run(self):
+        self.spider.start()
+        self.spider.join()
+        self.assertTrue(self.spider.success())

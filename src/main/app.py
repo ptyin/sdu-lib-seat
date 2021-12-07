@@ -23,18 +23,19 @@ if __name__ == '__main__':
                         level=logging.INFO, stream=sys.stdout)
 
     date = datetime.datetime.today() + datetime.timedelta(days=2)  # 后天
-    auth, spider = prepare(paras.userid, paras.passwd, paras.area, date)
+    auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry)
     # ------All information has been gathered------
 
     # Wait until tomorrow XX:XX:XX, defined by paras.time, occupying...
     wait_to_tomorrow(paras.time)
 
     # Ready to work!
-    count = 1
-    while count <= paras.retry and not book(auth, spider, preferred_seats=paras.seats):
+    count, ok = 1, False
+    while count <= paras.retry and not ok:
+        if auth is not None and spider is not None and auth.success() and spider.success():
+            auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry)
+        ok = book(auth, spider, preferred_seats=paras.seats)
         logging.warning('Try {}/{} failed, do not worry. Retrying in 30 seconds...'.format(count, paras.retry))
         time.sleep(30)
-        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date)
 
-    logging.info('Program existing...')
-    auth.session.close(), spider.session.close()
+    logging.info('-----------------Reservation on {}, program existing..., bye.-----------------'.format(date))

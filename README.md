@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 ### 运行
 
-- 在当天运行的脚本会在默认第2天00:00:02预约第3天的座位
+- 在当天运行的脚本会在默认第2天00:02:00预约第3天的座位
 - 例如今天是12月2日的23:50，我需要约后天也就是12月4日的座位，则在12月2日运行脚本，脚本会在12月3日凌晨进行预约
 
 ```shell
@@ -48,7 +48,7 @@ python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想�
 
 ```shell
 cd ./src/main/
-python app.py --userid 201805139999 --passwd abc123 --area 青岛校区图书馆-七楼-青岛馆七楼北阅览区 --seats N001 N011 --time 00:00:01
+python app.py --userid 201805139999 --passwd abc123 --area 青岛校区图书馆-七楼-青岛馆七楼北阅览区 --seats N001 N011 --time 00:02:00
 ```
 
 ## 2. 图形界面管理

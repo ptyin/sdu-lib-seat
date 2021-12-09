@@ -8,10 +8,9 @@ from core.spider import Spider
 from core.worker import Worker
 
 
-def wait_to_tomorrow(delay: str):
-    """Wait 'till tomorrow"""
+def wait_until(days: int, delay: str):
     delay: datetime.datetime = datetime.datetime.strptime(delay, '%H:%M:%S')
-    tomorrow = datetime.datetime.replace(datetime.datetime.today() + datetime.timedelta(days=1),  # 明天
+    tomorrow = datetime.datetime.replace(datetime.datetime.today() + datetime.timedelta(days=days),
                                          hour=delay.hour, minute=delay.minute, second=delay.second)
     delta = tomorrow - datetime.datetime.now()
     time.sleep(delta.seconds)

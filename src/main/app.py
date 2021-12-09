@@ -1,4 +1,4 @@
-import os
+import itertools
 import sys
 from argparse import ArgumentParser
 
@@ -22,20 +22,23 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s',
                         level=logging.INFO, stream=sys.stdout)
 
-    date = datetime.datetime.today() + datetime.timedelta(days=2)  # 后天
+    date = datetime.datetime.today() + datetime.timedelta(days=2)  # reservation date
     auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry)
     # ------All information has been gathered------
 
     # Wait until tomorrow XX:XX:XX, defined by paras.time, occupying...
-    wait_to_tomorrow(paras.time)
+    logging.info('----Waiting until {}...----'.format(paras.time))
+    wait_until(days=1, delay=paras.time)  # 1 represents tomorrow
 
+    # If either auth or spider failed today, try them tomorrow.
+    if not (auth is not None and spider is not None and auth.success() and spider.success()):
+        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry)
     # Ready to work!
-    count, ok = 1, False
-    while count <= paras.retry and not ok:
-        if auth is not None and spider is not None and auth.success() and spider.success():
-            auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry)
-        ok = book(auth, spider, preferred_seats=paras.seats)
+    count = 1
+    while count <= paras.retry and not book(auth, spider, preferred_seats=paras.seats):
         logging.warning('Try {}/{} failed, do not worry. Retrying in 30 seconds...'.format(count, paras.retry))
+        count += 1
         time.sleep(30)
+        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry)
 
-    logging.info('-----------------Reservation on {}, program existing..., bye.-----------------'.format(date))
+    logging.info('----{}, bye.----'.format("It's working" if count <= paras.retry else 'Failed'))

@@ -124,10 +124,10 @@ class Auth(Thread):
                 self.login()
             except EnvironmentError as env:
                 logging.error('系统环境导致认证进程出现异常{}，请检查'.format(env))
-                time.sleep(30)
+                time.sleep(10)
             except AuthException as e:
                 logging.error(e)
-                time.sleep(30)
+                time.sleep(10)
         return
 
 

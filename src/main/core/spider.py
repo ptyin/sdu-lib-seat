@@ -127,10 +127,10 @@ class Spider(Thread):
                 self.gather_info()
             except EnvironmentError:
                 self.__logger.error('系统环境导致爬虫进程出现异常，请检查')
-                time.sleep(30)
+                time.sleep(10)
             except SpiderException as e:
                 self.__logger.error(e)
-                time.sleep(30)
+                time.sleep(10)
 
         if self.final_area and self.segment is not None and len(self.seats) > 0:
             self.__logger.info('Spider process works! Selected area is {final_area}, '

@@ -64,7 +64,7 @@ class Auth(Thread):
             "rsa": self.rsa
         }
         res = self.session.post(url, data=data, allow_redirects=False)
-        self.__logger.info('Status code for phase-1-response is {}'.format(res.status_code))
+        self.__logger.debug('Status code for phase-1-response is {}'.format(res.status_code))
         if res.status_code != 302:
             raise AuthException('阶段1：响应状态码为{}, 认证失败'.format(res.status_code))
         url = res.headers.get("Location").replace(' ', '')
@@ -75,7 +75,7 @@ class Auth(Thread):
 
     def __phase2(self, url):
         res = self.session.get(url, allow_redirects=True)
-        self.__logger.info('Status code for phase-2-response is {}'.format(res.status_code))
+        self.__logger.debug('Status code for phase-2-response is {}'.format(res.status_code))
         if res.status_code != 200:
             raise AuthException('阶段2：响应状态码为{}, 认证失败'.format(res.status_code))
         return res.status_code

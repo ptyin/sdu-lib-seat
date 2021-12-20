@@ -6,6 +6,7 @@ from threading import Thread
 import requests
 from bs4 import BeautifulSoup
 import execjs
+import urllib.parse
 
 from logging import Logger
 
@@ -67,7 +68,7 @@ class Auth(Thread):
         self.__logger.debug('Status code for phase-1-response is {}'.format(res.status_code))
         if res.status_code != 302:
             raise AuthException('阶段1：响应状态码为{}, 认证失败'.format(res.status_code))
-        url = res.headers.get("Location").replace(' ', '')
+        url = urllib.parse.unquote(res.headers.get("Location").replace(' ', ''))
         if url.startswith("/cas/login?service="):
             url = url.replace("/cas/login?service=", "")
 

@@ -12,7 +12,7 @@ class TestAuth(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s', level=logging.DEBUG)
-        with open('../resrc/user.json', 'rt') as file:
+        with open('../resrc/user.json', 'rt', encoding='UTF-8') as file:
             info = json.loads(file.read())
             cls.info = info
         cls.auth = Auth(info['userid'], info['passwd'], retry=1)

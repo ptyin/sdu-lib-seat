@@ -97,7 +97,9 @@ sudo docker run -e BASIC_AUTH_USER=user -e BASIC_AUTH_PWD=yoursecretpassword -d 
 
 ## 3. 对开发者
 
-- 如果需要运行src/test文件夹下单元测试需要src/resrc文件夹下有user.json文件，样例：
+- 如果需要运行src/test文件夹下单元测试
+    - 需要安装pytest包
+    - 需要src/resrc文件夹下有user.json文件，样例：
 ```json
 {
     "username": "张三",

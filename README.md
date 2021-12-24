@@ -25,11 +25,11 @@ pip install -r requirements.txt
 
 ### 运行
 
-- 在当天运行的脚本会在默认00:06:00预约第2天的座位
+- 在当天上午6点前运行的脚本会在默认06:02:00预约第2天的座位
 
 ```shell
 cd ./src/main/
-python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想要约的座位] --time [脚本约座的时间]  --delta [脚本约座的日期]
+python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想要约的座位] --time [脚本约座的时间]  --delta [约座的日期间隔]
 ```
 
 ### 参数说明
@@ -40,9 +40,9 @@ python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想�
 | passwd |    str    | True  |                   山东大学统一身份认证密码                   |
 |  area  |    str    | True  |                    图书馆-楼层-楼层内区域                    |
 | seats  | List[str] | False | 想要约的座位，如果列出的座位均已无法约用，或没提供该参数，则在仍没被约用的座位进行约座 |
-|  time  |    str    | False | 发起约座的时间，若没提供该参数，则在第二天06:02分开始约后天的位置 |
+|  time  |    str    | False | 发起约座的时间，若没提供该参数，则在06:02分开始约第2天的位置 |
+| delta  |    int    | False |  0代表预约第2天，1代表预约第3天，以此类推，默认预约第2天 |
 | retry  |    int    | False | 如果约座失败（网络原因等）重试的次数，默认重试10次，间隔30s  |
-| delta  |    int    | False |  约座的日期间隔，0代表今天运行脚本，1代表明天运行脚本，以此类推，默认今天执行 |
 
 - 特别注意area参数要规范，是官网该区域的标题**去掉最后的座位**二字，比如蒋震图书馆-蒋震6楼-D603室从下图中获得
 

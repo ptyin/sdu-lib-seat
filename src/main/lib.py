@@ -22,7 +22,10 @@ def prepare(userid, passwd, query_area: str, date, retry) -> Tuple[Auth, Spider]
         # Get authorized.
         auth = Auth(userid, passwd, retry)
         # Spider library, area and seat info.
-        spider = Spider(query_area.split('-'), date, retry)
+        l = query_area.index("-")
+        r = query_area.rindex("-")
+        area_list = [query_area[:l], query_area[l + 1:r], query_area[r + 1:]]
+        spider = Spider(area_list, date, retry)
         # Start two threads concurrently.
         auth.start(), spider.start()
         auth.join(), spider.join()

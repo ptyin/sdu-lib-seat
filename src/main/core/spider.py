@@ -37,7 +37,7 @@ class Spider(Thread):
     def get_lib(self):
         res = self.session.get("http://seat.lib.sdu.edu.cn/home/web/f_second", headers=self.headers)
         soup = BeautifulSoup(res.text, 'html.parser')
-        keys = [e.string for e in soup.select('.x_panel > div > .rooms > .ceng > b')]
+        keys = [e.string for e in soup.select('.x_panel > div > .rooms > div:nth-child(2) > b')]
         values = [e['href'].split('/')[-1] for e in soup.select('.x_panel > div > .rooms > .seat > a')]
         self.areas = dict(zip(keys, values))
         self.__logger.debug('Library dict is generated as {}'.format(self.areas))

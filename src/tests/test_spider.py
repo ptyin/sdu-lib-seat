@@ -9,15 +9,15 @@ class TestSpider(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         date = datetime.datetime.today()+datetime.timedelta(0)
-        cls.spider = Spider("蒋震图书馆-蒋震6楼-D603室".split('-'), date=date, retry=1)
+        cls.spider = Spider("蒋震馆-蒋震6楼-D603室".split('-'), date=date, retry=1)
         logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s', level=logging.DEBUG)
 
     def test_get_lib(self):
         self.spider.get_lib()
-        self.assertIn('中心校区图书馆', self.spider.areas)
-        self.assertIn('蒋震图书馆', self.spider.areas)
-        self.assertIn('软件园校区图书馆', self.spider.areas)
-        self.assertIn('青岛校区图书馆', self.spider.areas)
+        self.assertIn('中心馆', self.spider.areas)
+        self.assertIn('蒋震馆', self.spider.areas)
+        self.assertIn('软件园馆', self.spider.areas)
+        self.assertIn('青岛馆', self.spider.areas)
 
     def test_get_area(self):
         date = (datetime.datetime.today()).strftime('%Y-%m-%d')

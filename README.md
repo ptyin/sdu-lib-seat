@@ -62,13 +62,10 @@ python app.py --userid 201805139999 --passwd abc123 --area 青岛馆-七楼-青�
 威海校区参考下方,Linux下可以用nohup后台运行
 ```shell
 cd ./src/main/
-<<<<<<< HEAD
+
 python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 06:02:00 --delta 0 --seats 200 --starttime '08:00' --endtime '12:00'
 python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 06:02:00 --delta 0 --seats 200 --starttime '14:00' --endtime '22:00'
-=======
-python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 06:02:30 --delta 0 --seats 200 --starttime '08:00' --endtime '12:00'
-python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 06:02:30 --delta 0 --seats 200 --starttime '14:00' --endtime '22:00'
->>>>>>> 2ab94df33e9f5bdb3edc4a98f7750f6dc822956e
+
 ```
 
 ## 图形界面管理

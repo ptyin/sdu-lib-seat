@@ -104,9 +104,8 @@ class Spider(Thread):
                     elif area["id"] == self.final_area and self.start_time == '14:00': # 获取下午预约segment
                         self.segment = area["area_times"]["data"]["list"][1]['bookTimeId']
                         break
-                    else:
-                        self.segment = area["area_times"]["data"]["list"][0]["bookTimeId"]
-                        break
+                if self.segment == None:
+                    raise SpiderException('获取segment失败')
             else:
                 raise SpiderException('选择的区域状态不正常')
 

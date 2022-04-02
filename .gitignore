@@ -1,5 +1,5 @@
 *.DS_Store
-
+*.pyc
 /venv/
 /.idea/
 /src/resrc/user.json

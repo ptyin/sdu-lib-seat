@@ -2,6 +2,7 @@ import logging
 import datetime
 from unittest import TestCase
 from core.spider import Spider
+import re
 
 
 class TestSpider(TestCase):
@@ -9,7 +10,8 @@ class TestSpider(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         date = datetime.datetime.today()+datetime.timedelta(0)
-        cls.spider = Spider("蒋震馆-蒋震6楼-D603室".split('-'), date=date, retry=1)
+        cls.spider = Spider(re.split(r'-(?![^()]*\))', "威海馆-图东环(3-4)-三楼阅览室"), date=date, retry=1,
+                            start_time="15:00", end_time="22:30")
         logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s', level=logging.DEBUG)
 
     def test_get_lib(self):

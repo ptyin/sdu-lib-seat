@@ -2,10 +2,12 @@ import logging
 import time
 from typing import Tuple
 import datetime
+import re
 
 from core.auth import Auth
 from core.spider import Spider
 from core.worker import Worker
+from core import pattern
 
 
 def wait_until(days: int, delay: str):
@@ -16,7 +18,7 @@ def wait_until(days: int, delay: str):
     time.sleep(delta.seconds)
 
 
-def prepare(userid, passwd, query_area: str, date, retry,start_time,end_time) -> Tuple[Auth, Spider]:
+def prepare(userid, passwd, query_area: str, date, retry, start_time, end_time) -> Tuple[Auth, Spider]:
     auth, spider = None, None
     try:
         # Get authorized.
@@ -25,7 +27,7 @@ def prepare(userid, passwd, query_area: str, date, retry,start_time,end_time) ->
         l = query_area.index("-")
         r = query_area.rindex("-")
         area_list = [query_area[:l], query_area[l + 1:r], query_area[r + 1:]]
-        spider = Spider(area_list, date, retry,start_time,end_time)
+        spider = Spider(area_list, date, retry, start_time, end_time)
         # Start two threads concurrently.
         auth.start(), spider.start()
         auth.join(), spider.join()

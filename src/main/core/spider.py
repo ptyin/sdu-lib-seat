@@ -10,7 +10,7 @@ from logging import Logger
 
 # noinspection HttpUrlsUsage
 class Spider(Thread):
-    def __init__(self, query_area: list, date: datetime.date, retry,start_time,end_time):
+    def __init__(self, query_area: list, date: datetime.date, retry, start_time, end_time):
         super().__init__()
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -57,7 +57,7 @@ class Spider(Thread):
         self.__logger.debug('Area info is {}'.format(self.areas))
         return res
 
-    def get_seat(self, area, segment, date,start_time,end_time):
+    def get_seat(self, area, segment, date, start_time, end_time):
         url = "http://seat.lib.sdu.edu.cn/api.php/spaces_old?area={area}&segment={segment}&day={day}&"\
               "startTime={start_time}&endTime={end_time}".format(area=area, segment=segment, day=date,
                                                                  start_time=start_time, end_time=end_time)
@@ -98,19 +98,27 @@ class Spider(Thread):
             if res.json()["status"] == 1:
                 areas = res.json()["data"]["list"]["childArea"]
                 for area in areas:
-                    if area["id"] == self.final_area and self.start_time == '08:00': # 获取上午预约segment
+                    if area["id"] != self.final_area:
+                        continue
+
+                    # Only one available book time.
+                    if len(area["area_times"]["data"]["list"]) == 1:
                         self.segment = area["area_times"]["data"]["list"][0]["bookTimeId"]
                         break
-                    elif area["id"] == self.final_area and self.start_time == '14:00': # 获取下午预约segment
-                        self.segment = area["area_times"]["data"]["list"][1]['bookTimeId']
+                    else:
+                        # Find the appropriate book time.
+                        for book_time in area["area_times"]["data"]["list"]:
+                            if self.start_time == book_time["startTime"]:
+                                self.segment = book_time["bookTimeId"]
                         break
-                if self.segment == None:
+
+                if self.segment is None:
                     raise SpiderException('获取segment失败')
             else:
                 raise SpiderException('选择的区域状态不正常')
 
             self.__logger.debug('Final area info {}: {}'.format(self.query_area[-1], self.final_area))
-            self.get_seat(self.final_area, self.segment, self.date,self.start_time,self.end_time)
+            self.get_seat(self.final_area, self.segment, self.date, self.start_time, self.end_time)
 
             if self.final_area and self.segment is not None and len(self.seats) > 0:
                 self.__gathered_enough = True

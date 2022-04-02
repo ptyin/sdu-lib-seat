@@ -17,8 +17,8 @@ if __name__ == '__main__':
                         help='发起约座的时间，默认是第二天06:02分开始抢后天的位置')
     parser.add_argument('--retry', type=int, default=10, help='重试次数')
     parser.add_argument('--delta', type=int, default=0, help='运行天数差，即0代表今天运行，1代表明天运行')
-    parser.add_argument('--starttime', type=str, default='08:00',help='开始时间')
-    parser.add_argument('--endtime', type=str, default='22:30',help='结束时间')
+    parser.add_argument('--starttime', type=str, default='08:00', help='座位开始时间')
+    parser.add_argument('--endtime', type=str, default='22:30', help='座位结束时间')
     paras = parser.parse_args()
 
     # Configure logging settings.
@@ -26,7 +26,8 @@ if __name__ == '__main__':
                         level=logging.INFO, stream=sys.stdout)
 
     date = datetime.datetime.today() + datetime.timedelta(days=paras.delta+1)  # reservation date
-    auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,paras.starttime,paras.endtime)
+    auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,
+                           paras.starttime, paras.endtime)
     # ------All information has been gathered------
 
     # Wait until tomorrow XX:XX:XX, defined by paras.time, occupying...
@@ -35,13 +36,15 @@ if __name__ == '__main__':
 
     # If either auth or spider failed today, try them tomorrow.
     if not (auth is not None and spider is not None and auth.success() and spider.success()):
-        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,paras.starttime,paras.endtime)
+        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,
+                               paras.starttime, paras.endtime)
     # Ready to work!
     count = 1
     while count <= paras.retry and not book(auth, spider, preferred_seats=paras.seats):
         logging.warning('Try {}/{} failed, do not worry. Retrying in 30 seconds...'.format(count, paras.retry))
         count += 1
         time.sleep(30)
-        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,paras.starttime,paras.endtime)
+        auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,
+                               paras.starttime, paras.endtime)
 
     logging.info('----{}, bye.----'.format("It's working" if count <= paras.retry else 'Failed'))

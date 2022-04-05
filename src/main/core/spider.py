@@ -7,15 +7,8 @@ from bs4 import BeautifulSoup
 
 from logging import Logger
 
-# 增加socks5代理模块
-import socket
-import socks
-socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
-socket.socket = socks.socksocket
 
 # noinspection HttpUrlsUsage
-
-
 class Spider(Thread):
     def __init__(self, query_area: list, date: datetime.date, retry, start_time, end_time):
         super().__init__()
@@ -154,8 +147,8 @@ class Spider(Thread):
             count += 1
             try:
                 self.gather_info()
-            except EnvironmentError:
-                self.__logger.error('系统环境导致爬虫进程出现异常，请检查')
+            except EnvironmentError as env:
+                self.__logger.error('系统环境导致爬虫进程出现异常{}，请检查'.format(env))
                 time.sleep(10)
             except SpiderException as e:
                 self.__logger.error(e)

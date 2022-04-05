@@ -1,6 +1,9 @@
 import itertools
 import sys
 from argparse import ArgumentParser
+# 增加socks5代理模块
+import socket
+import socks
 
 from lib import *
 
@@ -19,11 +22,16 @@ if __name__ == '__main__':
     parser.add_argument('--delta', type=int, default=0, help='运行天数差，即0代表今天运行，1代表明天运行')
     parser.add_argument('--starttime', type=str, default='08:00', help='座位开始时间')
     parser.add_argument('--endtime', type=str, default='22:30', help='座位结束时间')
+    parser.add_argument('--no-proxy', action='store_true', help='是否使用代理')
     paras = parser.parse_args()
 
     # Configure logging settings.
     logging.basicConfig(format='%(asctime)s  %(filename)s : %(message)s',
                         level=logging.INFO, stream=sys.stdout)
+
+    if not paras.no_proxy:
+        socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
+        socket.socket = socks.socksocket
 
     date = datetime.datetime.today() + datetime.timedelta(days=paras.delta+1)  # reservation date
     auth, spider = prepare(paras.userid, paras.passwd, paras.area, date, paras.retry,

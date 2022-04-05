@@ -5,15 +5,8 @@ import urllib.parse
 
 import requests
 
-# 增加socks5代理模块
-import socket
-import socks
-socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
-socket.socket = socks.socksocket
 
 # noinspection HttpUrlsUsage
-
-
 class Worker:
     def __init__(self, date, cookies: requests.sessions.RequestsCookieJar,
                  preferred_seats, seat_info, segment):

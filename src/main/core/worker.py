@@ -5,8 +5,15 @@ import urllib.parse
 
 import requests
 
+# 增加socks5代理模块
+import socket
+import socks
+socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
+socket.socket = socks.socksocket
 
 # noinspection HttpUrlsUsage
+
+
 class Worker:
     def __init__(self, date, cookies: requests.sessions.RequestsCookieJar,
                  preferred_seats, seat_info, segment):
@@ -45,7 +52,8 @@ class Worker:
         # 先挑选参数给出的座位，如果没有再遍历所有空闲的
         for seat in itertools.chain(self.preferred_seats, self.seat_info):
             if seat in self.seat_info:
-                if self.seat_info[seat]['status'] == 1 and self.__book(self.seat_info[seat]['id']):  # 空闲
+                # 空闲
+                if self.seat_info[seat]['status'] == 1 and self.__book(self.seat_info[seat]['id']):
                     # success
                     self.__logger.info('Seat {} has been occupied by {}-{} on date {}'.
                                        format(seat, self.cookies['userid'],

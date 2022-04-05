@@ -7,8 +7,15 @@ from bs4 import BeautifulSoup
 
 from logging import Logger
 
+# 增加socks5代理模块
+import socket
+import socks
+socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
+socket.socket = socks.socksocket
 
 # noinspection HttpUrlsUsage
+
+
 class Spider(Thread):
     def __init__(self, query_area: list, date: datetime.date, retry, start_time, end_time):
         super().__init__()
@@ -37,16 +44,21 @@ class Spider(Thread):
         self.__logger: Logger = logging.getLogger()
 
     def get_lib(self):
-        res = self.session.get("http://seat.lib.sdu.edu.cn/home/web/f_second", headers=self.headers)
+        res = self.session.get(
+            "http://seat.lib.sdu.edu.cn/home/web/f_second", headers=self.headers)
         soup = BeautifulSoup(res.text, 'html.parser')
-        keys = [e.string for e in soup.select('.x_panel > div > .rooms > div:nth-child(2) > b')]
-        values = [e['href'].split('/')[-1] for e in soup.select('.x_panel > div > .rooms > .seat > a')]
+        keys = [e.string for e in soup.select(
+            '.x_panel > div > .rooms > div:nth-child(2) > b')]
+        values = [e['href'].split(
+            '/')[-1] for e in soup.select('.x_panel > div > .rooms > .seat > a')]
         self.areas = dict(zip(keys, values))
-        self.__logger.debug('Library dict is generated as {}'.format(self.areas))
+        self.__logger.debug(
+            'Library dict is generated as {}'.format(self.areas))
 
     def get_area(self, area, date):
         # res = self.session.get("http://seat.lib.sdu.edu.cn/api.php/v3areas/{}".format(area))
-        res = self.session.get("http://seat.lib.sdu.edu.cn/api.php/v3areas/{}/date/{}".format(area, date))
+        res = self.session.get(
+            "http://seat.lib.sdu.edu.cn/api.php/v3areas/{}/date/{}".format(area, date))
         status = res.json()['status']
         if status != 1:
             raise SpiderException('Cannot gather area info.')
@@ -117,8 +129,10 @@ class Spider(Thread):
             else:
                 raise SpiderException('选择的区域状态不正常')
 
-            self.__logger.debug('Final area info {}: {}'.format(self.query_area[-1], self.final_area))
-            self.get_seat(self.final_area, self.segment, self.date, self.start_time, self.end_time)
+            self.__logger.debug('Final area info {}: {}'.format(
+                self.query_area[-1], self.final_area))
+            self.get_seat(self.final_area, self.segment,
+                          self.date, self.start_time, self.end_time)
 
             if self.final_area and self.segment is not None and len(self.seats) > 0:
                 self.__gathered_enough = True

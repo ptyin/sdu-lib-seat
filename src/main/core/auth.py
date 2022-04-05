@@ -10,8 +10,15 @@ import urllib.parse
 
 from logging import Logger
 
+# 增加socks5代理模块
+import socket
+import socks
+socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
+socket.socket = socks.socksocket
 
 # noinspection HttpUrlsUsage
+
+
 class Auth(Thread):
     def __init__(self, userid, password, retry):
         super().__init__()
@@ -51,7 +58,8 @@ class Auth(Thread):
         with open(os.path.join(os.path.dirname(__file__), "../util/des.js"), encoding="utf-8") as f:
             js = f.read()
             f.close()
-        self.rsa = execjs.compile(js).call('strEnc', self.userid + self.password + self.lt, "1", "2", "3")
+        self.rsa = execjs.compile(js).call(
+            'strEnc', self.userid + self.password + self.lt, "1", "2", "3")
         if self.rsa is None:
             raise AuthException("未获取DES加密的用户信息")
 
@@ -65,10 +73,12 @@ class Auth(Thread):
             "rsa": self.rsa
         }
         res = self.session.post(url, data=data, allow_redirects=False)
-        self.__logger.debug('Status code for phase-1-response is {}'.format(res.status_code))
+        self.__logger.debug(
+            'Status code for phase-1-response is {}'.format(res.status_code))
         if res.status_code != 302:
             raise AuthException('阶段1：响应状态码为{}, 认证失败'.format(res.status_code))
-        url = urllib.parse.unquote(res.headers.get("Location").replace(' ', ''))
+        url = urllib.parse.unquote(
+            res.headers.get("Location").replace(' ', ''))
         if url.startswith("/cas/login?service="):
             url = url.replace("/cas/login?service=", "")
 
@@ -76,7 +86,8 @@ class Auth(Thread):
 
     def __phase2(self, url):
         res = self.session.get(url, allow_redirects=True)
-        self.__logger.debug('Status code for phase-2-response is {}'.format(res.status_code))
+        self.__logger.debug(
+            'Status code for phase-2-response is {}'.format(res.status_code))
         if res.status_code != 200:
             raise AuthException('阶段2：响应状态码为{}, 认证失败'.format(res.status_code))
         return res.status_code

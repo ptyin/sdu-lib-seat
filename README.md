@@ -1,6 +1,11 @@
 <h2 align="center">SDU-LIB-SEAT</h2>
 
+## 使用前须知
+
+**项目仅供学习交流使用，这是个不错的 `Python爬虫`学习项目，请不要将其用于商业用途，更不要有偿出图书馆座位！**
+
 ### CHANGE LOG
+- [x] 2022/04/05 针对预约系统仅支持校园网访问，提出使用[docker-easyconnect](https://github.com/Hagb/docker-easyconnect)，通过使用SDU的VPN系统来让本软件访问预约系统,暂只适配[基本的命令行运行](#命令行用法)使用方式
 - [x] 2022/04/01 解决威海校区分时段预约座位问题
 - [x] 2022/02/20 图书馆空间预约系统UI变动导致爬虫进程失效，已适配
 - [x] 2022/02/16 图书馆开放预约时间调整为06:00，目前脚本已经适配，默认06:02:00预约
@@ -23,9 +28,24 @@ git clone https://github.com/PTYin/sdu-lib-seat.git
 cd sdu-lib-seat
 # 安装python依赖
 pip install -r requirements.txt
+# 若由于网络问题无法获取依赖，请执行
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 运行
+
+为了解决预约系统仅支持校园网访问，采用[docker-easyconnect](https://github.com/Hagb/docker-easyconnect)建立vpn连接，该docker支持配置socks5代理和http连接。于是我们需要先去pull该docker镜像，并根据使用文档运行该镜像,操作方法如下：
+
+(若系统没有安装docker或版本过老,请参考[安装Docker并运行](https://docs.docker.com/get-docker/)或自行百度或谷歌搜索)
+
+```shell
+# 拉取镜像
+docker pull hagb/docker-easyconnect:cli
+# 运行容器,socks5端口为1080,http代理端口8888
+docker run -d --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 -e EC_VER=7.6.3 -e CLI_OPTS="-d https://vpn.sdu.edu.cn -u 山东大学学工号 -p 山东大学统一身份认证密码" hagb/docker-easyconnect:cli
+```
+
+之后可以通过`docker ps`查看是否正在运行，并可以通过`docker logs 容器id`查看运行情况，若为`login successfully!`则建立代理成功，再执行以下步骤。
 
 - 在当天上午6点前运行的脚本会在默认06:02:00预约第2天的座位
 

@@ -1,5 +1,9 @@
 <h2 align="center">SDU-LIB-SEAT</h2>
 
+## 使用前须知
+
+**项目仅供学习交流使用，这是个不错的 `Python爬虫`学习项目，请不要将其用于商业用途，更不要有偿出图书馆座位！**
+
 ### CHANGE LOG
 - [x] 2022/04/05 针对预约系统仅支持校园网访问，提出使用[docker-easyconnect](https://github.com/Hagb/docker-easyconnect)，通过使用SDU的VPN系统来让本软件访问预约系统,暂只适配[基本的命令行运行](#命令行用法)使用方式
 - [x] 2022/04/01 解决威海校区分时段预约座位问题

@@ -16,8 +16,8 @@ if __name__ == '__main__':
     parser.add_argument('--seats', type=str, nargs='*',
                         help='想要约的座位，按照倾向程度排序，如果列出的座位均已无法预约，'
                              '或没提供该参数，则在所有仍没被约用的座位进行约座')
-    parser.add_argument('--time', type=str, default='06:02:00',
-                        help='发起约座的时间，默认是第二天06:02分开始抢后天的位置')
+    parser.add_argument('--time', type=str, default='12:31:00',
+                        help='发起约座的时间，默认是第二天12:31分开始抢后天的位置')
     parser.add_argument('--retry', type=int, default=10, help='重试次数')
     parser.add_argument('--delta', type=int, default=0, help='运行天数差，即0代表今天运行，1代表明天运行')
     parser.add_argument('--starttime', type=str, default='08:00', help='座位开始时间')

@@ -5,7 +5,7 @@
 **项目仅供学习交流使用，这是个不错的 `Python爬虫`学习项目，请不要将其用于商业用途，更不要有偿出图书馆座位！**
 
 ### CHANGE LOG
-- [x] 2022/05/10 图书馆开放预约时间调整为12:30，脚本默认暂未适配，可手动添加time参数修改
+- [x] 2022/05/10 图书馆开放预约时间调整为12:30，脚本已经适配，默认12:31:00预约，也可手动添加time参数修改
 - [x] 2022/04/05 针对预约系统仅支持校园网访问，提出使用[docker-easyconnect](https://github.com/Hagb/docker-easyconnect)，通过使用SDU的VPN系统来让本软件访问预约系统,暂只适配[基本的命令行运行](#命令行用法)使用方式
 - [x] 2022/04/01 解决威海校区分时段预约座位问题
 - [x] 2022/02/20 图书馆空间预约系统UI变动导致爬虫进程失效，已适配
@@ -52,7 +52,7 @@ docker run -d --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:1080:10
 
 ### 运行
 
-- 在当天上午6点前运行的脚本会在默认06:02:00预约第2天的座位
+- 在当天上午6点前运行的脚本会在默认12:31:00预约第2天的座位
 
 ```shell
 cd ./src/main/
@@ -90,7 +90,7 @@ python app.py --userid 201805139999 --passwd abc123 --area 青岛馆-七楼-青�
 cd ./src/main/
 
 python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 12:31:00 --delta 0 --seats 200 --starttime '08:00' --endtime '12:00'
-python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 12:31:00 --delta 0 --seats 200 --starttime '13:30' --endtime '22:00'
+python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 12:31:00 --delta 0 --seats 200 --starttime '14:30' --endtime '22:00'
 
 ```
 

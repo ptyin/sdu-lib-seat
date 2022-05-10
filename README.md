@@ -5,6 +5,7 @@
 **项目仅供学习交流使用，这是个不错的 `Python爬虫`学习项目，请不要将其用于商业用途，更不要有偿出图书馆座位！**
 
 ### CHANGE LOG
+- [x] 2022/05/10 图书馆开放预约时间调整为12:30，脚本默认暂未适配，可手动添加time参数修改
 - [x] 2022/04/05 针对预约系统仅支持校园网访问，提出使用[docker-easyconnect](https://github.com/Hagb/docker-easyconnect)，通过使用SDU的VPN系统来让本软件访问预约系统,暂只适配[基本的命令行运行](#命令行用法)使用方式
 - [x] 2022/04/01 解决威海校区分时段预约座位问题
 - [x] 2022/02/20 图书馆空间预约系统UI变动导致爬虫进程失效，已适配
@@ -33,6 +34,8 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 使用代理
+
+**最近实测可以不用进行代理访问，不过还是建议开启代理避免再次限制校园网访问**
 
 为了解决预约系统仅支持校园网访问，采用[docker-easyconnect](https://github.com/Hagb/docker-easyconnect)建立vpn连接，该docker支持配置socks5代理和http连接。于是我们需要先去pull该docker镜像，并根据使用文档运行该镜像,操作方法如下：
 
@@ -64,11 +67,11 @@ python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想�
 | passwd |    str    | True  |                   山东大学统一身份认证密码                   |
 |  area  |    str    | True  |                    图书馆-楼层-楼层内区域(威海校区注意用单引号引用)                    |
 | seats  | List[str] | False | 想要约的座位，如果列出的座位均已无法约用，或没提供该参数，则在仍没被约用的座位进行约座 |
-|  time  |    str    | False | 发起约座的时间，若没提供该参数，则在06:02分开始约第2天的位置 |
+|  time  |    str    | False | 发起约座的时间，若没提供该参数，则在12:30开始约第2天的位置 |
 | delta  |    int    | False |  0代表预约第2天，1代表预约第3天，以此类推，默认预约第2天 |
 | retry  |    int    | False | 如果约座失败（网络原因等）重试的次数，默认重试10次，间隔30s  |
-| starttime  |    str    | False | 济南校本部、青岛校区默认为早上08:00，威海校区上午时间段为08:00,下午时间段为**13:30**(5/7调整)  |
-| endtime  |    str    | False | 济南校本部、青岛校区默认为晚上22:30，威海校区上午时间段为12:00,下午时间段为22:00  |
+| starttime  |    str    | False | 济南校本部、青岛校区、威海校区主楼默认为早上08:00，威海校区电子阅览室、图东环楼上午时间段为08:00,下午时间段为14:30  |
+| endtime  |    str    | False | 济南校本部、青岛校区、威海校区主楼默认为晚上22:30，威海校区电子阅览室、图东环楼上午时间段为12:00,下午时间段为22:00  |
 | no-proxy | bool | False | 若处于校园网中则无需使用代理，使用`python app.py ... --no-proxy`执行即可，默认使用代理 |
 
 - 特别注意area参数要规范，是官网该区域的标题**去掉最后的座位**二字，比如蒋震图书馆-蒋震6楼-D603室从下图中获得
@@ -79,15 +82,15 @@ python app.py --userid [学号] --passwd [密码] --area [区域] --seats [想�
 
 ```shell
 cd ./src/main/
-python app.py --userid 201805139999 --passwd abc123 --area 青岛馆-七楼-青岛馆七楼北阅览区 --seats N001 N011 --time 06:02:00  --delta 0 --no-proxy
+python app.py --userid 201805139999 --passwd abc123 --area 青岛馆-七楼-青岛馆七楼北阅览区 --seats N001 N011 --time 12:31:00  --delta 0 --no-proxy
 ```
 
 威海校区参考下方,Linux下可以用nohup后台运行
 ```shell
 cd ./src/main/
 
-python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 06:02:00 --delta 0 --seats 200 --starttime '08:00' --endtime '12:00'
-python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 06:02:00 --delta 0 --seats 200 --starttime '13:30' --endtime '22:00'
+python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 12:31:00 --delta 0 --seats 200 --starttime '08:00' --endtime '12:00'
+python app.py --userid 201900800xxx --passwd abc123 --area '威海馆-主楼(3-12)-三楼阅览室' --time 12:31:00 --delta 0 --seats 200 --starttime '13:30' --endtime '22:00'
 
 ```
 
